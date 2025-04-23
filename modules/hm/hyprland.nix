@@ -9,7 +9,7 @@ let
 in {
   config = lib.mkIf cfg.enable {
     # Create a keyboard config that we'll append to userprefs.conf
-    home.file.".config/hypr/keyboard.conf" = { 
+    home.file.".config/hypr/local.conf" = { 
       text = ''
       # Finnish keyboard layout configuration
       input {
@@ -25,7 +25,7 @@ in {
     };
 
     # Add an activation script that makes the userprefs file modifiable and adds our config
-    home.activation.setHyprlandKeyboard = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.loadLocalConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       USERPREFS="$HOME/.config/hypr/userprefs.conf"
       KEYBOARD_CONF="$HOME/.config/hypr/local.conf"
       MARKER="# --- LOCAL USER CONFIG --- "
