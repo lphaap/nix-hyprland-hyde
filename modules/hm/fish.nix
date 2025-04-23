@@ -1,4 +1,10 @@
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
 home.file.".config/fish/hyde_config.fish".text = ''
   # Set Fish greeting to empty (no welcome message)
   set fish_greeting
