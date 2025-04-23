@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./hyprland-keyboard.nix
+    ./hyprland.nix
   ];
 
   # home-manager options go here
