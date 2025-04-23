@@ -33,19 +33,20 @@ in {
       # Make sure userprefs.conf exists and is modifiable
       if [ -f "$USERPREFS" ]; then
         # Make the file writable
-        chmod u+w "$USERPREFS" || true
         
         # Check if our configuration is already in the file
         if ! grep -q "$MARKER" "$USERPREFS"; then
           echo "Adding local configuration to userprefs.conf"
-          cat "$KEYBOARD_CONF" >> "$USERPREFS" || true
+	  chmod u+w "$USERPREFS" || true
+	  cat "$KEYBOARD_CONF" >> "$USERPREFS" || true
         else
           echo "Local configuration already present in userprefs.conf"
         fi
       else
         echo "Warning: userprefs.conf not found, creating it with keyboard config"
         mkdir -p "$(dirname "$USERPREFS")"
-        cat "$KEYBOARD_CONF" > "$USERPREFS" || true
+        chmod u+w "$USERPREFS" || true
+	cat "$KEYBOARD_CONF" > "$USERPREFS" || true
       fi
       
       # Always exit successfully
