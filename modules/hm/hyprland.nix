@@ -22,5 +22,5 @@
 		'';
 		force = true;
 		mutable = true;
-	}
+	};
 }
