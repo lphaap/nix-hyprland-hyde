@@ -2,7 +2,7 @@
 
 {
   imports = [
-    # ./example.nix - add your modules here
+    ./keyboard.nix
   ];
 
   environment.systemPackages = [

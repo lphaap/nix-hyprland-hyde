@@ -20,14 +20,12 @@
       dolphin.enable = true; # file manager
       editors = {
         enable = true; # enable editors module
-        #neovim = {
-	#  enable = true;
-	#};
+        neovim = true;
         vscode = {
           enable = true; # enable vscode module
           #wallbash = true; # enable wallbash extension for vscode
         };
-        #vim.enable = true; # enable vim module
+        vim = true; # enable vim module
         default = "nvim"; # default text editor
       };
       fastfetch.enable = true; # fastfetch configuration
@@ -63,7 +61,6 @@
       shell = {
         enable = true; # enable shell module
         zsh.enable = false; # enable zsh shell
-        zsh.configText = ""; # zsh config text
         bash.enable = false; # enable bash shell
         fish.enable = true; # enable fish shell
         pokego.enable = true; # enable Pokemon ASCII art scripts

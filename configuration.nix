@@ -78,7 +78,7 @@ in
 
     hostname = "luna"; # Change to your preferred hostname
     timezone = "Europe/Helsinki"; # Change to your timezone
-    locale = "en_CA.UTF-8"; # Change to your preferred locale
+    locale = "fi_FI.UTF-8"; # Change to your preferred locale
 
       audio.enable = true; # enable audio module
       boot = {
@@ -111,7 +111,7 @@ in
       "docker"
       # Add other groups as needed
     ];
-    shell = pkgs.fish; # Change if you prefer a different shell
+    shell = pkgs.fish;
   };
 
   system.stateVersion = "25.05";
