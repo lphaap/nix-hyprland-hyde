@@ -18,5 +18,7 @@
     		follow_mouse = 1
     		sensitivity = 0
 	}
-'';
+	'';
+	force = true;
+	mutable = true;
 }
