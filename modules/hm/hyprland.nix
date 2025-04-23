@@ -7,7 +7,7 @@
 
 {
 	# In modules/hm/default.nix or a new file
-	home.file.".config/hypr/userprefs.conf" = { 
+	home.file.".config/hypr/local.conf" = { 
 		text = ''
 		# Your existing system config plus your keyboard settings
 		input {
