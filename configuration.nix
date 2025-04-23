@@ -78,7 +78,7 @@ in
 
     hostname = "luna"; # Change to your preferred hostname
     timezone = "Europe/Helsinki"; # Change to your timezone
-    locale = "fi_FI.UTF-8"; # Change to your preferred locale
+    locale = "en_US.UTF-8"; # Change to your preferred locale
 
       audio.enable = true; # enable audio module
       boot = {
