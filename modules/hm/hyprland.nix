@@ -4,15 +4,14 @@
   pkgs,
   ...
 }:
-
 let
   cfg = config.hydenix.hm.hyprland;
 in {
   config = lib.mkIf cfg.enable {
-    # Create the local.conf file with keyboard settings
-    home.file.".config/hypr/local.conf" = { 
+    # Create a keyboard config that we'll append to userprefs.conf
+    home.file.".config/hypr/keyboard.conf" = { 
       text = ''
-      # Your existing system config plus your keyboard settings
+      # Finnish keyboard layout configuration
       input {
           kb_layout = fi
           kb_variant =
@@ -23,50 +22,35 @@ in {
           sensitivity = 0
       }
       '';
-      force = true;
-      mutable = true;
     };
-    
-    # Fix the activation script to be more resilient
-    home.activation.ensureHyprlandLocalConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      echo "Ensuring local.conf is sourced in Hyprland configuration"
+
+    # Add an activation script that makes the userprefs file modifiable and adds our config
+    home.activation.setHyprlandKeyboard = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      USERPREFS="$HOME/.config/hypr/userprefs.conf"
+      KEYBOARD_CONF="$HOME/.config/hypr/local.conf"
+      MARKER="# --- LOCAL USER CONFIG --- "
       
-      # Make sure hyprland.conf exists before trying to modify it
-      MAIN_CONFIG="$HOME/.config/hypr/hyprland.conf"
-      SOURCE_LINE="source = ~/.config/hypr/local.conf"
-      
-      if [ ! -f "$MAIN_CONFIG" ]; then
-        echo "Warning: $MAIN_CONFIG doesn't exist yet, creating it"
-        mkdir -p "$(dirname "$MAIN_CONFIG")"
-        echo "# Hyprland Configuration" > "$MAIN_CONFIG"
-        echo "$SOURCE_LINE" >> "$MAIN_CONFIG"
-      elif ! grep -q "$SOURCE_LINE" "$MAIN_CONFIG"; then
-        echo "Adding source line for local.conf to hyprland.conf"
-        # Use tee for better error handling than direct redirection
-        echo "$SOURCE_LINE" | tee -a "$MAIN_CONFIG" >/dev/null
+      # Make sure userprefs.conf exists and is modifiable
+      if [ -f "$USERPREFS" ]; then
+        # Make the file writable
+        chmod u+w "$USERPREFS" || true
+        
+        # Check if our configuration is already in the file
+        if ! grep -q "$MARKER" "$USERPREFS"; then
+          echo "Adding local configuration to userprefs.conf"
+          cat "$KEYBOARD_CONF" >> "$USERPREFS" || true
+        else
+          echo "Local configuration already present in userprefs.conf"
+        fi
       else
-        echo "local.conf already sourced in hyprland.conf"
+        echo "Warning: userprefs.conf not found, creating it with keyboard config"
+        mkdir -p "$(dirname "$USERPREFS")"
+        cat "$KEYBOARD_CONF" > "$USERPREFS" || true
       fi
       
-      # Make sure our configuration is applied one way or another
-      echo "Creating keyboard configuration script as fallback"
-      mkdir -p "$HOME/.config/hypr/scripts"
-      cat > "$HOME/.config/hypr/scripts/set-keyboard.sh" << 'EOF'
-#!/bin/sh
-sleep 1
-hyprctl keyword input:kb_layout fi
-hyprctl keyword input:kb_options caps:escape
-EOF
-      chmod +x "$HOME/.config/hypr/scripts/set-keyboard.sh"
-      
-      # Add to autostart if not already there
-      mkdir -p "$HOME/.config/hypr/autostart.d"
-      if [ ! -f "$HOME/.config/hypr/autostart.d/keyboard.conf" ]; then
-        echo "exec-once = ~/.config/hypr/scripts/set-keyboard.sh" > "$HOME/.config/hypr/autostart.d/keyboard.conf"
-      fi
-      
-      # Success regardless of what happened above
+      # Always exit successfully
       exit 0
     '';
+    
   };
 }
