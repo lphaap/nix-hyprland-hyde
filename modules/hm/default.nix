@@ -2,7 +2,7 @@
 
 {
   imports = [
-    # ./example.nix - add your modules here
+    ./hyprland-keyboard.nix
   ];
 
   # home-manager options go here
