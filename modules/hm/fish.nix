@@ -146,10 +146,6 @@ home.file.".config/fish/hyde_config.fish".text = ''
 # In modules/hm/shell.nix
 
 home.packages = with pkgs; [
-  # Existing packages...
-  
-  # Add these for fish when it's enabled
-  (lib.mkIf cfg.fish.enable [
     starship        # For prompt
     zoxide          # Smart cd command
     direnv          # Directory environment manager
@@ -158,7 +154,6 @@ home.packages = with pkgs; [
     fd              # Modern find replacement
     bat             # Better cat with syntax highlighting
     fzf             # Fuzzy finder
-  ])
 ];
 
 }
