@@ -3,6 +3,7 @@
 {
   imports = [
     ./hyprland.nix
+    ./fish.nix
   ];
 
   # home-manager options go here
