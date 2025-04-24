@@ -24,8 +24,24 @@ in {
       '';
     };
 
+    # Explicitly remove the file from home-manager's management
+    # This prevents home-manager from creating the symlink in the first place
+    home.file.".config/hypr/userprefs.conf".enable = false;
+
     # Create a user-editable userprefs.conf
-    home.activation.setupHyprlandConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.setupHyprlandConfig = lib.hm.dag.entryBefore ["linkGeneration"] ''
+      echo "Checking for Hyprland config symlinks..."
+      USERPREFS="$HOME/.config/hypr/userprefs.conf"
+      
+      # Remove the symlink if it exists (before home-manager tries to create it)
+      if [ -L "$USERPREFS" ]; then
+        echo "Removing symlink to Nix store"
+        rm "$USERPREFS"
+      fi
+    '';
+    
+    # Apply our custom configuration after everything else
+    home.activation.applyHyprlandConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       USERPREFS="$HOME/.config/hypr/userprefs.conf"
       LOCAL_CONF="$HOME/.config/hypr/local.conf"
       MARKER="# --- LOCAL USER CONFIG --- "
@@ -34,13 +50,7 @@ in {
       # Ensure the directory exists
       mkdir -p "$(dirname "$USERPREFS")"
       
-      # Check if the file is a symlink
-      if [ -L "$USERPREFS" ]; then
-        echo "Removing symlink to Nix store"
-        rm "$USERPREFS"
-      fi
-      
-      # Create the userprefs file if it doesn't exist or was a symlink
+      # Create the userprefs file if it doesn't exist
       if [ ! -f "$USERPREFS" ]; then
         echo "Creating new userprefs.conf from original"
         cp "$ORIGINAL_PATH" "$USERPREFS" 2>/dev/null || touch "$USERPREFS"
@@ -56,7 +66,12 @@ in {
         echo "$MARKER" >> "$USERPREFS"
         cat "$LOCAL_CONF" >> "$USERPREFS"
       else
-        echo "Local configuration already present in userprefs.conf"
+        # Configuration exists, but update it anyway to ensure latest changes
+        echo "Updating local configuration in userprefs.conf"
+        sed -i "/$MARKER/,\$ d" "$USERPREFS"
+        echo "" >> "$USERPREFS"
+        echo "$MARKER" >> "$USERPREFS"
+        cat "$LOCAL_CONF" >> "$USERPREFS"
       fi
     '';
   };
