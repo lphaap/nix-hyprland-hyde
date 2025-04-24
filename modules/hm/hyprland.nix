@@ -8,91 +8,58 @@ let
   cfg = config.hydenix.hm.hyprland;
 in {
   config = lib.mkIf cfg.enable {
-    home.file = {
-      ".config/hypr/userprefs.conf" = {
-        source = "${pkgs.hydenix.hyde}/Configs/.config/hypr/userprefs.conf";
-        force = true;
-        mutable = true;
-      };
-      
-      # Create local configuration file
-      ".config/hypr/local.conf" = { 
-        text = ''
-          # Finnish keyboard layout configuration
-          input {
-              kb_layout = fi
-              kb_variant =
-              kb_model =
-              kb_options = caps:escape
-              kb_rules =
-              follow_mouse = 1
-              sensitivity = 0
-          }
-        '';
-      };
+    # Declare userprefs.conf as a mutable file
+    home.file.".config/hypr/userprefs.conf" = {
+      source = "${pkgs.hydenix.hyde}/Configs/.config/hypr/userprefs.conf";
+      force = true;
+      mutable = true;
     };
     
-    home.activation.loadLocalConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # Create a local config file with custom settings
+    home.file.".config/hypr/local.conf" = { 
+      text = ''
+      # Finnish keyboard layout configuration
+      input {
+          kb_layout = fi
+          kb_variant =
+          kb_model =
+          kb_options = caps:escape
+          kb_rules =
+          follow_mouse = 1
+          sensitivity = 0
+      }
+      '';
+    };
+
+    # Add an activation script that integrates our local config
+    # Note: We use mutableGeneration to ensure it runs after the mutable files are set up
+    home.activation.mergeLocalConfig = lib.hm.dag.entryAfter [ "mutableGeneration" ] ''
       USERPREFS="$HOME/.config/hypr/userprefs.conf"
       LOCAL_CONF="$HOME/.config/hypr/local.conf"
       MARKER="# --- LOCAL USER CONFIG --- "
       
-      # Make sure the directory exists with proper permissions
+      # Ensure the directory exists (though it should already by now)
       mkdir -p "$(dirname "$USERPREFS")"
       
-      # If the file exists, ensure we have the right to modify it
       if [ -f "$USERPREFS" ]; then
-        # Try to make it writable
-        chmod u+w "$USERPREFS" 2>/dev/null || true
-        
-        # If we still don't have write permission, create a backup and make a new one
-        if [ ! -w "$USERPREFS" ]; then
-          echo "Cannot write to $USERPREFS, creating a new file..."
-          # Save original content if possible
-          if [ -r "$USERPREFS" ]; then
-            ORIGINAL_CONTENT=$(cat "$USERPREFS" 2>/dev/null || echo "")
-            BACKUP_FILE="$USERPREFS.bak.$(date +%s)"
-            echo "$ORIGINAL_CONTENT" > "$BACKUP_FILE" 2>/dev/null || true
-            # Create new file with original content plus our additions
-            echo "$ORIGINAL_CONTENT" > "$USERPREFS.new"
-            if ! grep -q "$MARKER" "$USERPREFS.new"; then
-              echo "" >> "$USERPREFS.new"
-              echo "$MARKER" >> "$USERPREFS.new"
-              cat "$LOCAL_CONF" >> "$USERPREFS.new"
-            fi
-            # Try to replace the original file
-            mv "$USERPREFS.new" "$USERPREFS" 2>/dev/null
-            if [ $? -ne 0 ]; then
-              echo "Couldn't replace $USERPREFS. Your custom config is in $USERPREFS.new"
-            else
-              echo "Successfully replaced $USERPREFS with new content"
-            fi
-          else
-            # Create a completely new file
-            echo "$MARKER" > "$USERPREFS.new"
-            cat "$LOCAL_CONF" >> "$USERPREFS.new"
-            mv "$USERPREFS.new" "$USERPREFS" 2>/dev/null || echo "Created new config file at $USERPREFS.new (couldn't replace original)"
-          fi
+        # Check if our configuration is already in the file
+        if ! grep -q "$MARKER" "$USERPREFS"; then
+          echo "Adding local configuration to userprefs.conf"
+          echo "" >> "$USERPREFS"
+          echo "$MARKER" >> "$USERPREFS"
+          cat "$LOCAL_CONF" >> "$USERPREFS"
         else
-          # We have write permissions, proceed normally
-          if ! grep -q "$MARKER" "$USERPREFS"; then
-            echo "Adding local configuration to userprefs.conf"
-            echo "" >> "$USERPREFS"
-            echo "$MARKER" >> "$USERPREFS"
-            cat "$LOCAL_CONF" >> "$USERPREFS"
-          else
-            echo "Local configuration already present in userprefs.conf"
-          fi
+          echo "Local configuration already present in userprefs.conf"
+          # Optionally update existing configuration if needed
+          # sed -i "/$MARKER/,$ d" "$USERPREFS"
+          # echo "$MARKER" >> "$USERPREFS"
+          # cat "$LOCAL_CONF" >> "$USERPREFS"
         fi
       else
-        # File doesn't exist, create it
-        echo "Creating new userprefs.conf with local configuration"
+        echo "Warning: userprefs.conf not found, creating it with local config"
         echo "$MARKER" > "$USERPREFS"
         cat "$LOCAL_CONF" >> "$USERPREFS"
       fi
-      
-      # Ensure proper permissions
-      chmod 644 "$USERPREFS" 2>/dev/null || true
     '';
   };
 }
