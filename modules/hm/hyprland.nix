@@ -8,12 +8,18 @@ let
   cfg = config.hydenix.hm.hyprland;
 in {
   config = lib.mkIf cfg.enable {
-    # Create a local config file with custom settings
-    home.file.".config/hypr/local.conf" = { 
-      text = ''
-      # Local Hyprland Configuration
-      
-      # Keyboard layout settings
+
+home.file = {
+  ".config/hypr/userprefs.conf" = {
+    source = "${pkgs.hydenix.hyde}/Configs/.config/hypr/userprefs.conf";
+    force = true;
+    mutable = true;
+  };
+  
+  # Then also create our own override file
+  ".config/hypr/local.conf" = { 
+    text = ''
+      # Finnish keyboard layout configuration
       input {
           kb_layout = fi
           kb_variant =
@@ -23,17 +29,9 @@ in {
           follow_mouse = 1
           sensitivity = 0
       }
-      
-      # Add any other local configurations below
-      # ...
-      '';
-    };
-
-home.file.".config/hypr/userprefs.conf" = {
-    source = "${pkgs.hydenix.hyde}/Configs/.config/hypr/userprefs.conf";
-    force = true;
-    mutable = true;
+    '';
   };
+};
 
 home.activation.loadLocalConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
   USERPREFS="$HOME/.config/hypr/userprefs.conf"
