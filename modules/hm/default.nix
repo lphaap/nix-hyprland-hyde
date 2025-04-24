@@ -4,6 +4,7 @@
   imports = [
     ./hyprland.nix
     ./fish.nix
+    ./starship.nix
   ];
 
   # home-manager options go here
