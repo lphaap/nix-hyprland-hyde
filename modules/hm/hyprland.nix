@@ -31,20 +31,72 @@ home.file = {
   };
 };
 
-# And still use the activation script to merge them
-home.activation.mergeHyprConfigs = lib.hm.dag.entryAfter [ "mutableGeneration" ] ''
-  # Now the file should already be copied and mutable
+home.activation.loadLocalConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
   USERPREFS="$HOME/.config/hypr/userprefs.conf"
   KEYBOARD_CONF="$HOME/.config/hypr/local.conf"
   MARKER="# --- LOCAL USER CONFIG --- "
   
-  if [ -f "$USERPREFS" ] && [ -f "$KEYBOARD_CONF" ]; then
-    if ! grep -q "$MARKER" "$USERPREFS"; then
-      echo "" >> "$USERPREFS"
-      echo "$MARKER" >> "$USERPREFS"
-      cat "$KEYBOARD_CONF" >> "$USERPREFS"
-      echo "Local configuration added to userprefs.conf"
+  # Make sure the directory exists with proper permissions
+  mkdir -p "$(dirname "$USERPREFS")"
+  
+  # If the file exists, ensure we have the right to modify it
+  if [ -f "$USERPREFS" ]; then
+    # Try to make it writable
+    chmod u+w "$USERPREFS" 2>/dev/null || true
+    
+    # If we still don't have write permission, create a backup and make a new one
+    if [ ! -w "$USERPREFS" ]; then
+      echo "Cannot write to $USERPREFS, creating a new file..."
+      # Save original content if possible
+      if [ -r "$USERPREFS" ]; then
+        ORIGINAL_CONTENT=$(cat "$USERPREFS" 2>/dev/null || echo "")
+        BACKUP_FILE="$USERPREFS.bak.$(date +%s)"
+        echo "$ORIGINAL_CONTENT" > "$BACKUP_FILE" 2>/dev/null || true
+        # Create new file with original content plus our additions
+        echo "$ORIGINAL_CONTENT" > "$USERPREFS.new"
+        if ! grep -q "$MARKER" "$USERPREFS.new"; then
+          echo "" >> "$USERPREFS.new"
+          echo "$MARKER" >> "$USERPREFS.new"
+          cat "$KEYBOARD_CONF" >> "$USERPREFS.new"
+        fi
+        # Try to replace the original file
+        mv "$USERPREFS.new" "$USERPREFS" 2>/dev/null
+        if [ $? -ne 0 ]; then
+          echo "Couldn't replace $USERPREFS. Your custom config is in $USERPREFS.new"
+        else
+          echo "Successfully replaced $USERPREFS with new content"
+        fi
+      else
+        # Create a completely new file
+        echo "$MARKER" > "$USERPREFS.new"
+        cat "$KEYBOARD_CONF" >> "$USERPREFS.new"
+        mv "$USERPREFS.new" "$USERPREFS" 2>/dev/null || 
+        echo "Created new config file at $USERPREFS.new (couldn't replace original)"
+      fi
+    else
+      # We have write permissions, proceed normally
+      if ! grep -q "$MARKER" "$USERPREFS"; then
+        echo "Adding local configuration to userprefs.conf"
+        echo "" >> "$USERPREFS"
+        echo "$MARKER" >> "$USERPREFS"
+        cat "$KEYBOARD_CONF" >> "$USERPREFS"
+      else
+        echo "Local configuration already present in userprefs.conf"
+      fi
     fi
+  else
+    # File doesn't exist, create it
+    echo "Creating new userprefs.conf with local configuration"
+    echo "$MARKER" > "$USERPREFS"
+    cat "$KEYBOARD_CONF" >> "$USERPREFS"
   fi
+  
+  # Ensure proper permissions
+  chmod 644 "$USERPREFS" 2>/dev/null || true
+  
+  # Always return success
+  exit 0
 '';
+
 }
+
