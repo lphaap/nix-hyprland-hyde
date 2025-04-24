@@ -8,14 +8,7 @@ let
   cfg = config.hydenix.hm.hyprland;
 in {
   config = lib.mkIf cfg.enable {
-    # Declare userprefs.conf as a mutable file
-    home.file.".config/hypr/userprefs.conf" = {
-      source = "${pkgs.hydenix.hyde}/Configs/.config/hypr/userprefs.conf";
-      force = true;
-      mutable = true;
-    };
-    
-    # Create a local config file with custom settings
+    # Create the local config file
     home.file.".config/hypr/local.conf" = { 
       text = ''
       # Finnish keyboard layout configuration
@@ -31,34 +24,39 @@ in {
       '';
     };
 
-    # Add an activation script that integrates our local config
-    # Note: We use mutableGeneration to ensure it runs after the mutable files are set up
-    home.activation.mergeLocalConfig = lib.hm.dag.entryAfter [ "mutableGeneration" ] ''
+    # Create a user-editable userprefs.conf
+    home.activation.setupHyprlandConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       USERPREFS="$HOME/.config/hypr/userprefs.conf"
       LOCAL_CONF="$HOME/.config/hypr/local.conf"
       MARKER="# --- LOCAL USER CONFIG --- "
+      ORIGINAL_PATH="${pkgs.hydenix.hyde}/Configs/.config/hypr/userprefs.conf"
       
-      # Ensure the directory exists (though it should already by now)
+      # Ensure the directory exists
       mkdir -p "$(dirname "$USERPREFS")"
       
-      if [ -f "$USERPREFS" ]; then
-        # Check if our configuration is already in the file
-        if ! grep -q "$MARKER" "$USERPREFS"; then
-          echo "Adding local configuration to userprefs.conf"
-          echo "" >> "$USERPREFS"
-          echo "$MARKER" >> "$USERPREFS"
-          cat "$LOCAL_CONF" >> "$USERPREFS"
-        else
-          echo "Local configuration already present in userprefs.conf"
-          # Optionally update existing configuration if needed
-          # sed -i "/$MARKER/,$ d" "$USERPREFS"
-          # echo "$MARKER" >> "$USERPREFS"
-          # cat "$LOCAL_CONF" >> "$USERPREFS"
-        fi
-      else
-        echo "Warning: userprefs.conf not found, creating it with local config"
-        echo "$MARKER" > "$USERPREFS"
+      # Check if the file is a symlink
+      if [ -L "$USERPREFS" ]; then
+        echo "Removing symlink to Nix store"
+        rm "$USERPREFS"
+      fi
+      
+      # Create the userprefs file if it doesn't exist or was a symlink
+      if [ ! -f "$USERPREFS" ]; then
+        echo "Creating new userprefs.conf from original"
+        cp "$ORIGINAL_PATH" "$USERPREFS" 2>/dev/null || touch "$USERPREFS"
+      fi
+      
+      # Ensure the file is writable
+      chmod 644 "$USERPREFS"
+      
+      # Check if our configuration is already in the file
+      if ! grep -q "$MARKER" "$USERPREFS"; then
+        echo "Adding local configuration to userprefs.conf"
+        echo "" >> "$USERPREFS"
+        echo "$MARKER" >> "$USERPREFS"
         cat "$LOCAL_CONF" >> "$USERPREFS"
+      else
+        echo "Local configuration already present in userprefs.conf"
       fi
     '';
   };
