@@ -8,6 +8,7 @@
     ./docker.nix
     ./php.nix
     ./database.nix
+    ./node.nix
   ];
 
   # home-manager options go here

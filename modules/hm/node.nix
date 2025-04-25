@@ -20,14 +20,7 @@
     nodePackages.typescript
     nodePackages.ts-node
     nodePackages.typescript-language-server
-    
-    # JS/TS linting and formatting
-    nodePackages.eslint
-    nodePackages.prettier
-  ];
 
-  # Add Node version management
-  programs.nvm = {
-    enable = true;
-  };
+    nvm
+  ];
 }
