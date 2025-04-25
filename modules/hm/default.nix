@@ -6,7 +6,7 @@
     ./fish.nix
     ./docker.nix
     ./php.nix
-    ./nodejs.nix
+    ./node.nix
     ./database.nix
     ./browsers.nix
   ];
