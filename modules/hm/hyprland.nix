@@ -22,8 +22,8 @@ in {
           sensitivity = 0
       };
 
-      # Set preferred monitor scale to 1
-      monitor=,preferred,auto,1;
+      # Set preferred monitor scale
+      monitor=,preferred,auto,1.3;
       '';
     };
 
