@@ -8,7 +8,7 @@
 {
   home.packages = with pkgs; [
     # Node.js - latest stable
-    nodejs
+    nodejs_latest
     
     # Package managers
     nodePackages.npm
