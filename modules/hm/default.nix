@@ -6,6 +6,8 @@
     ./fish.nix
     ./starship.nix
     ./docker.nix
+    ./php.nix
+    ./database.nix
   ];
 
   # home-manager options go here
