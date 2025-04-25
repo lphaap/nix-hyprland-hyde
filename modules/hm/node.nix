@@ -20,7 +20,5 @@
     nodePackages.typescript
     nodePackages.ts-node
     nodePackages.typescript-language-server
-
-    nvm
   ];
 }
