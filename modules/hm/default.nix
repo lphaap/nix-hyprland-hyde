@@ -4,6 +4,7 @@
   imports = [
     ./hyprland.nix
     ./fish.nix
+    ./starship.nix
     ./docker.nix
     ./php.nix
     ./node.nix
