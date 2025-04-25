@@ -20,10 +20,10 @@ in {
           kb_rules =
           follow_mouse = 1
           sensitivity = 0
-      };
+      }
 
       # Set preferred monitor scale
-      monitor=,preferred,auto,1.3;
+      monitor=,preferred,auto,1.25
       '';
     };
 
