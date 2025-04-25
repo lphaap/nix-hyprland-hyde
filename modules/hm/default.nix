@@ -4,11 +4,11 @@
   imports = [
     ./hyprland.nix
     ./fish.nix
-    ./starship.nix
     ./docker.nix
     ./php.nix
+    ./nodejs.nix
     ./database.nix
-    ./node.nix
+    ./browsers.nix
   ];
 
   # home-manager options go here
