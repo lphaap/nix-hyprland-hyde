@@ -25,10 +25,5 @@
     # Encryption/Hashing Extensions
     php84Extensions.openssl
     php84Extensions.sodium
-    
-    # Development tools
-    php84Packages.php-cs-fixer
-    php84Packages.phpstan
-    php84Packages.psalm
   ];
 }
