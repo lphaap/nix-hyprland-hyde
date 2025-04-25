@@ -8,7 +8,7 @@
 {
   home.packages = with pkgs; [
     # Database clients and tools
-    dbeaver          # Universal database manager
+    dbeaver-bin         # Universal database manager
     
     # MySQL tools
     mycli            # MySQL CLI with auto-completion and syntax highlighting
