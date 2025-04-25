@@ -3,6 +3,7 @@
 {
   imports = [
     ./keyboard.nix
+    ./docker.nix
   ];
 
   environment.systemPackages = [

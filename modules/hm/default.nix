@@ -5,6 +5,7 @@
     ./hyprland.nix
     ./fish.nix
     ./starship.nix
+    ./docker.nix
   ];
 
   # home-manager options go here
