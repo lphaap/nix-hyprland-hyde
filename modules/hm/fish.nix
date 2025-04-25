@@ -116,26 +116,37 @@ home.file.".config/fish/hyde_config.fish".text = ''
     pokego --no-title -r 1,3,6
   end
 
-  # Fish color scheme - based on Catppuccin Mocha
-  set -U fish_color_normal cdd6f4
-  set -U fish_color_command 89b4fa
-  set -U fish_color_param f2cdcd
-  set -U fish_color_quote a6e3a1
-  set -U fish_color_redirection f5c2e7
-  set -U fish_color_end fab387
-  set -U fish_color_error f38ba8
-  set -U fish_color_selection --background=313244
-  set -U fish_color_search_match --background=313244
-  set -U fish_color_operator f5c2e7
-  set -U fish_color_escape eba0ac
-  set -U fish_color_autosuggestion 6c7086
-  set -U fish_color_comment 7f849c
+  # Fish color scheme - Old School
+  set -U fish_color_normal normal
+  set -U fish_color_command 00FF00
+  set -U fish_color_keyword 00FF00
+  set -U fish_color_quote ff8787
+  set -U fish_color_redirection 7BFF7B
+  set -U fish_color_end ff8787
+  set -U fish_color_error A40000
+  set -U fish_color_param 00ff00
+  set -U fish_color_comment ff8787
+  set -U fish_color_match --background=brblue
+  set -U fish_color_selection white --bold --background=brblack
+  set -U fish_color_search_match bryellow --background=brblack
+  set -U fish_color_history_current --bold
+  set -U fish_color_operator 00a6b2
+  set -U fish_color_escape 00a6b2
+  set -U fish_color_cwd green
+  set -U fish_color_cwd_root red
+  set -U fish_color_option 30BE30
   set -U fish_color_valid_path --underline
-  set -U fish_pager_color_prefix f5c2e7
-  set -U fish_pager_color_completion 89dceb
-  set -U fish_pager_color_description 7f849c
-  set -U fish_pager_color_progress 89b4fa
-  set -U fish_pager_color_selected_background --background=313244
+  set -U fish_color_autosuggestion 777777
+  set -U fish_color_user brgreen
+  set -U fish_color_host normal
+  set -U fish_color_host_remote yellow
+  set -U fish_color_status red
+  set -U fish_color_cancel --reverse
+  set -U fish_pager_color_prefix normal --bold --underline
+  set -U fish_pager_color_progress brwhite --background=cyan
+  set -U fish_pager_color_completion normal
+  set -U fish_pager_color_description B3A06D
+  set -U fish_pager_color_selected_background --background=brblack
 
   # Load local config if it exists
   if test -f $HOME/.config/fish/local.fish
@@ -157,3 +168,4 @@ home.packages = with pkgs; [
 ];
 
 }
+
