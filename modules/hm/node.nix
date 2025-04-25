@@ -11,7 +11,6 @@
     nodejs_23
     
     # Package managers
-    nodePackages.npm
     nodePackages.pnpm
     yarn
     bun  # Bun runtime and package manager
