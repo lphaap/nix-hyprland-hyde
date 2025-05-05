@@ -57,6 +57,14 @@ home.file.".config/fish/hyde_config.fish".text = ''
     alias ll="ls -lha"
   end
 
+  # Ensure gcc is in PATH
+  fish_add_path ${pkgs.gcc}/bin
+  fish_add_path ${pkgs.gnumake}/bin
+  
+  # Set environment variables for C compilation
+  set -gx CC "${pkgs.gcc}/bin/gcc"
+  set -gx CXX "${pkgs.gcc}/bin/g++"
+
   # Common aliases
   alias c="clear"
   alias ..="cd .."
