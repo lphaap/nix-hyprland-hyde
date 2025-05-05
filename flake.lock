@@ -49,14 +49,14 @@
       "locked": {
         "lastModified": 1745375409,
         "narHash": "sha256-bGu21TIoKFGyODkId41Gfbsx/5ieGl4dOLWNAAL/usY=",
-        "owner": "lphaap",
-        "repo": "nix-flake-hyprland-hyde",
+        "owner": "richen604",
+        "repo": "hydenix",
         "rev": "334619046e819c9f0bf35a0f9f70c0cc8e6de6d2",
         "type": "github"
       },
       "original": {
-        "owner": "lphaap",
-        "repo": "nix-flake-hyprland-hyde",
+        "owner": "richen604",
+        "repo": "hydenix",
         "type": "github"
       }
     },
@@ -128,14 +128,14 @@
       "locked": {
         "lastModified": 1746419967,
         "narHash": "sha256-0Rst+it8hsUS08UyS0YtUUsFfDX0zkpflOhHzcMz5Zw=",
-        "owner": "lphaap",
-        "repo": "nix-flake-nvimchad",
+        "owner": "nix-community",
+        "repo": "nix4nvchad",
         "rev": "468b8f9a00e7fddb3cf031bb4e968c3d08562e4e",
         "type": "github"
       },
       "original": {
-        "owner": "lphaap",
-        "repo": "nix-flake-nvimchad",
+        "owner": "nix-community",
+        "repo": "nix4nvchad",
         "type": "github"
       }
     },

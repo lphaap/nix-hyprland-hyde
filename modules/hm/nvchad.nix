@@ -25,6 +25,8 @@
       nodePackages.typescript-language-server
       nodePackages.bash-language-server
     ];
+
+    gcc = pkgs.gcc;
     
     # Minimal custom configuration
     extraConfig = ''
