@@ -1,21 +1,18 @@
 {
-  description = "template for hydenix";
+  description = "@lphaap NixOs master config";
 
   inputs = {
-    # User's nixpkgs - for user packages
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Hydenix and its nixpkgs - kept separate to avoid conflicts
     hydenix = {
-      # Available inputs:
-      # Main: github:richen604/hydenix
-      # Dev: github:richen604/hydenix/dev
-      # Commit: github:richen604/hydenix/<commit-hash>
-      # Version: github:richen604/hydenix/v1.0.0
-      url = "github:richen604/hydenix";
+      url = "github:lphaap/nix-flake-hyprland-hyde";
+    };
+	
+    nix4nvchad = {
+      url = "github:lphaap/nix-flake-nvimchad";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Nix-index-database - for comma and command-not-found
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
