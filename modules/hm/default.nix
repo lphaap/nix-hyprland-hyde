@@ -10,6 +10,7 @@
     ./node.nix
     ./database.nix
     ./browsers.nix
+    ./nvchad.nix
   ];
 
   # home-manager options go here
