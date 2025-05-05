@@ -20,6 +20,8 @@
       # Core tools
       ripgrep
       fd
+      gcc
+      gnumake
       
       # Language servers
       nodePackages.typescript-language-server
